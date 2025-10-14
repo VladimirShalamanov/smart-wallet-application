@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "users",
+      "type": "app.user.property.UserProperties",
+      "sourceType": "app.user.property.UserProperties"
+    },
+    {
+      "name": "users.default-user",
+      "type": "app.user.property.UserProperties$DefaultUser",
+      "sourceType": "app.user.property.UserProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "users.default-user.country",
+      "type": "app.user.model.UserCountry",
+      "sourceType": "app.user.property.UserProperties$DefaultUser"
+    },
+    {
+      "name": "users.default-user.password",
+      "type": "java.lang.String",
+      "sourceType": "app.user.property.UserProperties$DefaultUser"
+    },
+    {
+      "name": "users.default-user.username",
+      "type": "java.lang.String",
+      "sourceType": "app.user.property.UserProperties$DefaultUser"
+    },
+    {
+      "name": "users.test-property",
+      "type": "java.lang.String",
+      "sourceType": "app.user.property.UserProperties"
+    }
+  ],
+  "hints": []
+}
