@@ -115,3 +115,7 @@ p.alert-warning {
   -webkit-text-fill-color: transparent;
   margin: 5px 0 0;
 }
+
+.succeeded-message {
+  color: green;
+}

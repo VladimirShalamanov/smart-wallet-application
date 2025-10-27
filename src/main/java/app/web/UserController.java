@@ -6,6 +6,7 @@ import app.web.dto.DtoMapper;
 import app.web.dto.EditProfileRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -55,8 +56,12 @@ public class UserController {
         return new ModelAndView("redirect:/home");
     }
 
+    // @PreAuthorize("hasRole('ADMIN')") [search in 'ROLE_'] is when we used in 'UserData' - new SimpleGrantedAuthority("ROLE_" + role.name())
+    // @PreAuthorize("hasAuthority('ADMIN')") when we use only ONE word - ex. new SimpleGrantedAuthority(role.name())
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ModelAndView getUsers() {
+
         List<User> users = userService.getAll();
 
         ModelAndView modelAndView = new ModelAndView();

@@ -1,5 +1,6 @@
 package app.web;
 
+import app.security.UserData;
 import app.subscription.model.SubscriptionType;
 import app.subscription.service.SubscriptionService;
 import app.transaction.model.Transaction;
@@ -8,6 +9,7 @@ import app.user.service.UserService;
 import app.web.dto.UpgradeRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,10 +33,9 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public ModelAndView getUpgradePage(HttpSession session) {
+    public ModelAndView getUpgradePage(@AuthenticationPrincipal UserData userData) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
+        User user = userService.getById(userData.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("upgrade");
@@ -46,10 +47,9 @@ public class SubscriptionController {
 
     // /subscriptions/history
     @GetMapping("/history")
-    public ModelAndView getSubscriptionHistoryPage(HttpSession session) {
+    public ModelAndView getSubscriptionHistoryPage(@AuthenticationPrincipal UserData userData) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
+        User user = userService.getById(userData.getUserId());
 
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("subscription-history");
@@ -62,11 +62,10 @@ public class SubscriptionController {
     public ModelAndView upgrade(
             @Valid UpgradeRequest upgradeRequest,
             BindingResult bindingResult,
-            HttpSession session,
+            @AuthenticationPrincipal UserData userData,
             @RequestParam("subscriptionType") SubscriptionType subscriptionType) {
 
-        UUID userId = (UUID) session.getAttribute("userId");
-        User user = userService.getById(userId);
+        User user = userService.getById(userData.getUserId());
 
         if (bindingResult.hasErrors()) {
             ModelAndView modelAndView = new ModelAndView();
