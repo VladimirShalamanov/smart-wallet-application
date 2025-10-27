@@ -7,7 +7,6 @@ import app.transaction.model.Transaction;
 import app.user.model.User;
 import app.user.service.UserService;
 import app.web.dto.UpgradeRequest;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/subscriptions")
