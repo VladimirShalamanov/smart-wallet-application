@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestInit implements ApplicationRunner {
 
-    private final NotificationClien notificationClien;
+    private final NotificationClient notificationClient;
 
     @Autowired
-    public TestInit(NotificationClien notificationClien) {
-        this.notificationClien = notificationClien;
+    public TestInit(NotificationClient notificationClient) {
+        this.notificationClient = notificationClient;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        ResponseEntity<String> res = notificationClien.getHelloMessage("Vlad");
+        ResponseEntity<String> res = notificationClient.getHelloMessage("Vlad");
     }
 }

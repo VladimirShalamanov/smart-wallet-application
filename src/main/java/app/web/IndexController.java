@@ -2,7 +2,6 @@ package app.web;
 
 import app.security.UserData;
 import app.user.model.User;
-import app.user.property.UserProperties;
 import app.user.service.UserService;
 import app.wallet.model.Wallet;
 import app.web.dto.LoginRequest;
@@ -23,17 +22,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class IndexController {
 
     private final UserService userService;
-    private final UserProperties userProperties;
 
     @Autowired
-    public IndexController(UserService userService, UserProperties userProperties) {
+    public IndexController(UserService userService) {
         this.userService = userService;
-        this.userProperties = userProperties;
     }
 
     @GetMapping("/")
     public String getIndexPage() {
-
         return "index";
     }
 
@@ -58,19 +54,6 @@ public class IndexController {
         return modelAndView;
     }
 
-//    @PostMapping("/login")
-//    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult, HttpSession session) {
-//
-//        if (bindingResult.hasErrors()) {
-//            return new ModelAndView("login");
-//        }
-//
-//        User user = userService.login(loginRequest);
-//        session.setAttribute("userId", user.getId());
-//
-//        return new ModelAndView("redirect:/home");
-//    }
-
     @GetMapping("/register")
     public ModelAndView getRegisterPage() {
 
@@ -94,25 +77,6 @@ public class IndexController {
         return new ModelAndView("redirect:/login");
     }
 
-//    @GetMapping("/logout")
-//    public String logout(HttpSession session) {
-//        session.invalidate();
-//        return "redirect:/";
-//    }
-
-    // old code
-//    @GetMapping("/home")
-//    public ModelAndView getHomePage(HttpSession session) {
-//
-//        UUID userId = (UUID) session.getAttribute("userId");
-//        User user = userService.getById(userId);
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//        modelAndView.setViewName("home");
-//        modelAndView.addObject("user", user);
-//
-//        return modelAndView;
-//    }
 
     @GetMapping("/home")
     public ModelAndView getHomePage(@AuthenticationPrincipal UserData userData) {
@@ -127,4 +91,37 @@ public class IndexController {
 
         return modelAndView;
     }
+
+// old code
+//    @PostMapping("/login")
+//    public ModelAndView login(@Valid LoginRequest loginRequest, BindingResult bindingResult, HttpSession session) {
+//
+//        if (bindingResult.hasErrors()) {
+//            return new ModelAndView("login");
+//        }
+//
+//        User user = userService.login(loginRequest);
+//        session.setAttribute("userId", user.getId());
+//
+//        return new ModelAndView("redirect:/home");
+//    }
+//
+//    @GetMapping("/logout")
+//    public String logout(HttpSession session) {
+//        session.invalidate();
+//        return "redirect:/";
+//    }
+//
+//    @GetMapping("/home")
+//    public ModelAndView getHomePage(HttpSession session) {
+//
+//        UUID userId = (UUID) session.getAttribute("userId");
+//        User user = userService.getById(userId);
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//        modelAndView.setViewName("home");
+//        modelAndView.addObject("user", user);
+//
+//        return modelAndView;
+//    }
 }
