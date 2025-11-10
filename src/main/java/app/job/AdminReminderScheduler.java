@@ -24,7 +24,7 @@ public class AdminReminderScheduler {
     }
 
     @Async
-    @Scheduled(fixedDelay = 5000)
+    @Scheduled(fixedDelay = 60_000)
     public void sendReminderToAdmins() throws InterruptedException {
 
         List<User> admins = userService.getAll()

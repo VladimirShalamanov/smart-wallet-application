@@ -1,5 +1,6 @@
 package app.user.service;
 
+import app.notification.service.NotificationService;
 import app.security.UserData;
 import app.subscription.model.Subscription;
 import app.subscription.service.SubscriptionService;
@@ -40,18 +41,21 @@ public class UserService implements UserDetailsService {
     private final WalletService walletService;
     private final SubscriptionService subscriptionService;
     private final UserProperties userProperties;
+    private final NotificationService notificationService;
 
     @Autowired
     public UserService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        WalletService walletService,
                        SubscriptionService subscriptionService,
-                       UserProperties userProperties) {
+                       UserProperties userProperties,
+                       NotificationService notificationService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.walletService = walletService;
         this.subscriptionService = subscriptionService;
         this.userProperties = userProperties;
+        this.notificationService = notificationService;
     }
 
     public User login(LoginRequest loginRequest) {
@@ -98,6 +102,8 @@ public class UserService implements UserDetailsService {
         user.setSubscriptions(List.of(defaultSubscription));
 
         log.info("New user profile was registered in the system for user [%s].".formatted(registerRequest.getUsername()));
+        // false - because in "smart-wallet" the user have username at register, not email
+        notificationService.upsertPreference(user.getId(), false, null);
 
         return user;
     }
@@ -126,6 +132,12 @@ public class UserService implements UserDetailsService {
     public void updateProfile(UUID id, EditProfileRequest editProfileRequest) {
 
         User user = getById(id);
+
+        if (editProfileRequest.getEmail() != null && !editProfileRequest.getEmail().isBlank()) {
+            notificationService.upsertPreference(user.getId(), true, editProfileRequest.getEmail());
+        } else {
+            notificationService.upsertPreference(user.getId(), false, null);
+        }
 
         user.setFirstName(editProfileRequest.getFirstName());
         user.setLastName(editProfileRequest.getLastName());
