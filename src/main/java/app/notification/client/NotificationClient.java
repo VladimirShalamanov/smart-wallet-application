@@ -1,6 +1,7 @@
 package app.notification.client;
 
 import app.notification.client.dto.Email;
+import app.notification.client.dto.EmailRequest;
 import app.notification.client.dto.PreferenceResponse;
 import app.notification.client.dto.UpsertPreferenceRequest;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -29,4 +30,7 @@ public interface NotificationClient {
 
     @GetMapping("/notifications")
     ResponseEntity<List<Email>> getNotificationHistory(@RequestParam("userId") UUID userId);
+
+    @PostMapping("/notifications")
+    ResponseEntity<Void> sendEmail(@RequestBody EmailRequest requestBody);
 }

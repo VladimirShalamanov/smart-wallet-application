@@ -1,5 +1,6 @@
 package app.subscription.service;
 
+import app.notification.service.NotificationService;
 import app.subscription.model.Subscription;
 import app.subscription.model.SubscriptionPeriod;
 import app.subscription.model.SubscriptionStatus;
@@ -17,19 +18,28 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Service
 public class SubscriptionService {
 
+    private static final String UPGRADE_EMAIL_SUBJECT = "Successful plan upgrade";
+    private static final String UPGRADE_EMAIL_BODY = "You have successfully purchased %s plan with period %s for %.2f Euro, your new subscription will expiry %s.";
+
     private final SubscriptionRepository subscriptionRepository;
     private final WalletService walletService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public SubscriptionService(SubscriptionRepository subscriptionRepository, WalletService walletService) {
+    public SubscriptionService(SubscriptionRepository subscriptionRepository,
+                               WalletService walletService,
+                               NotificationService notificationService) {
+
         this.subscriptionRepository = subscriptionRepository;
         this.walletService = walletService;
+        this.notificationService = notificationService;
     }
 
     public Subscription createDefaultSubscription(User user) {
@@ -85,6 +95,13 @@ public class SubscriptionService {
 
         subscriptionRepository.save(currentlyActiveSubscription);
         subscriptionRepository.save(newActiveSubscription);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy HH:mm");
+        String dateEx = newActiveSubscription.getExpiryOn().format(formatter);
+        LocalDateTime subscriptionExpiryOn = LocalDateTime.parse(dateEx, formatter);
+        String body = UPGRADE_EMAIL_BODY.formatted(newActiveSubscription.getType(), newActiveSubscription.getPeriod(), newActiveSubscription.getPrice(), subscriptionExpiryOn);
+
+        notificationService.sendEmail(user.getId(), UPGRADE_EMAIL_SUBJECT, body);
 
         return chargeResultTransaction;
     }

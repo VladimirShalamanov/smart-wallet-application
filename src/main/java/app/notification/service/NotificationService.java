@@ -2,6 +2,7 @@ package app.notification.service;
 
 import app.notification.client.NotificationClient;
 import app.notification.client.dto.Email;
+import app.notification.client.dto.EmailRequest;
 import app.notification.client.dto.PreferenceResponse;
 import app.notification.client.dto.UpsertPreferenceRequest;
 import feign.FeignException;
@@ -57,5 +58,20 @@ public class NotificationService {
         return response.getBody() != null
                 ? response.getBody().stream().limit(5).toList()
                 : Collections.emptyList();
+    }
+
+    public void sendEmail(UUID userId, String subject, String body) {
+
+        EmailRequest dto = EmailRequest.builder()
+                .userId(userId)
+                .subject(subject)
+                .body(body)
+                .build();
+
+        try {
+            client.sendEmail(dto);
+        } catch (FeignException e) {
+            log.error("[S2S Call]: Failed due to %s".formatted(e.getMessage()));
+        }
     }
 }
