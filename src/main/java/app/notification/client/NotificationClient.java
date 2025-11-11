@@ -1,10 +1,17 @@
 package app.notification.client;
 
+import app.notification.client.dto.Email;
+import app.notification.client.dto.PreferenceResponse;
 import app.notification.client.dto.UpsertPreferenceRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
+import java.util.UUID;
 
 // name - Metadata (Service name)
 // url - base URL
@@ -16,4 +23,10 @@ public interface NotificationClient {
 
     @PostMapping("/preferences")
     ResponseEntity<Void> upsertPreference(@RequestBody UpsertPreferenceRequest requestBody);
+
+    @GetMapping("/preferences")
+    ResponseEntity<PreferenceResponse> getPreferenceByUserId(@RequestParam("userId") UUID userId);
+
+    @GetMapping("/notifications")
+    ResponseEntity<List<Email>> getNotificationHistory(@RequestParam("userId") UUID userId);
 }

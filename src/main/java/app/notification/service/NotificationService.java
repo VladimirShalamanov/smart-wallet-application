@@ -1,12 +1,17 @@
 package app.notification.service;
 
 import app.notification.client.NotificationClient;
+import app.notification.client.dto.Email;
+import app.notification.client.dto.PreferenceResponse;
 import app.notification.client.dto.UpsertPreferenceRequest;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 //8.Exercise: Microservice Architecture
@@ -38,5 +43,19 @@ public class NotificationService {
             log.error("[S2S Call]: Failed due to %s".formatted(e.getMessage()));
             // case 2: throw error and brake main operation (ex. Register)
         }
+    }
+
+    public PreferenceResponse getPreferenceByUserId(UUID userId) {
+
+        return client.getPreferenceByUserId(userId).getBody();
+    }
+
+    public List<Email> getUserLastEmails(UUID userId) {
+
+        ResponseEntity<List<Email>> response = client.getNotificationHistory(userId);
+
+        return response.getBody() != null
+                ? response.getBody().stream().limit(5).toList()
+                : Collections.emptyList();
     }
 }

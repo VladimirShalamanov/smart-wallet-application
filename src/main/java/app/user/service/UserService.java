@@ -128,7 +128,6 @@ public class UserService implements UserDetailsService {
         return getByUsername(userProperties.getDefaultUser().getUsername());
     }
 
-
     public void updateProfile(UUID id, EditProfileRequest editProfileRequest) {
 
         User user = getById(id);
