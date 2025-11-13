@@ -36,6 +36,20 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                         .logoutSuccessUrl("/")
+                        // todo For CSRF protection
+                        // Use the default POST /logout and remove the GET matcher
+                        // Post the logout with the CSRF token:
+                        // <form th:action="@{/logout}" method="post">
+                        // TOKEN in Fragment - reusable todo !!!
+                        //  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        //  <button type="submit">Logout</button>
+                        // </form>
+
+                        // How to verify CSRF is enabled
+                        // - Submit a POST to any protected endpoint without a CSRF token;
+                        //      you should get 403 Forbidden with an “Invalid CSRF token” message.
+                        // - In logs (DEBUG), you’ll see CsrfFilter in the filter chain.
+                        // - In a test, MockMvc will need with(csrf()) for state-changing requests.
                 );
 
         return httpSecurity.build();
