@@ -19,7 +19,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         httpSecurity
                 .authorizeHttpRequests(matcher -> matcher
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("/", "/register").permitAll()
+                        .requestMatchers("/", "/register", "/error").permitAll()
                         // This condition is in the ...Controller, but we can set here
                         // .requestMatchers("/admin-panel").hasRole("ADMIN")
                         .anyRequest().authenticated()

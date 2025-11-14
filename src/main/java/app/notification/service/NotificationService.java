@@ -72,6 +72,7 @@ public class NotificationService {
             client.sendEmail(dto);
         } catch (FeignException e) {
             log.error("[S2S Call]: Failed due to %s".formatted(e.getMessage()));
+            // here you may create Custom Exception and user Redirect
         }
     }
 }

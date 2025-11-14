@@ -1,5 +1,7 @@
 package app.user.service;
 
+import app.exception.UserNotFoundException;
+import app.exception.UsernameAlreadyExistException;
 import app.notification.service.NotificationService;
 import app.security.UserData;
 import app.subscription.model.Subscription;
@@ -11,7 +13,6 @@ import app.user.repository.UserRepository;
 import app.wallet.model.Wallet;
 import app.wallet.service.WalletService;
 import app.web.dto.EditProfileRequest;
-import app.web.dto.LoginRequest;
 import app.web.dto.RegisterRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
@@ -50,6 +51,7 @@ public class UserService implements UserDetailsService {
                        SubscriptionService subscriptionService,
                        UserProperties userProperties,
                        NotificationService notificationService) {
+
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.walletService = walletService;
@@ -58,30 +60,14 @@ public class UserService implements UserDetailsService {
         this.notificationService = notificationService;
     }
 
-    public User login(LoginRequest loginRequest) {
-        Optional<User> optionalUser = userRepository.findByUsername(loginRequest.getUsername());
-
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("Incorrect username or password.");
-        }
-
-        String rawPassword = loginRequest.getPassword();
-        String hashedPassword = optionalUser.get().getPassword();
-
-        if (!passwordEncoder.matches(rawPassword, hashedPassword)) {
-            throw new RuntimeException("Incorrect username or password.");
-        }
-
-        return optionalUser.get();
-    }
-
     @Transactional
     @CacheEvict(value = "users", allEntries = true)
     public User register(RegisterRequest registerRequest) {
+
         Optional<User> optionalUser = userRepository.findByUsername(registerRequest.getUsername());
 
         if (optionalUser.isPresent()) {
-            throw new RuntimeException("User with [%s] username already exist.".formatted(registerRequest.getUsername()));
+            throw new UsernameAlreadyExistException("User with [%s] username already exist.".formatted(registerRequest.getUsername()));
         }
 
         User user = User.builder()
@@ -116,18 +102,19 @@ public class UserService implements UserDetailsService {
 
     public User getByUsername(String username) {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User with [%s] username does not exist.".formatted(username)));
+                .orElseThrow(() -> new UserNotFoundException("User with [%s] username does not exist.".formatted(username)));
     }
 
     public User getById(UUID id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User with [%s] id does not exist.".formatted(id)));
+                .orElseThrow(() -> new UserNotFoundException("User with [%s] id does not exist.".formatted(id)));
     }
 
     public User getDefaultUser() {
         return getByUsername(userProperties.getDefaultUser().getUsername());
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public void updateProfile(UUID id, EditProfileRequest editProfileRequest) {
 
         User user = getById(id);
@@ -146,6 +133,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public void switchRole(UUID userId) {
 
         User user = getById(userId);
@@ -160,6 +148,7 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
+    @CacheEvict(value = "users", allEntries = true)
     public void switchStatus(UUID userId) {
 
         User user = getById(userId);
@@ -176,7 +165,9 @@ public class UserService implements UserDetailsService {
 
         ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession currentSession = servletRequestAttributes.getRequest().getSession(true);
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("Username not found"));
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with [%s] username does not exist.".formatted(username)));
 
         if (!user.isActive()) {
             currentSession.setAttribute("inactiveUserMessage", "This account is blocked!");
