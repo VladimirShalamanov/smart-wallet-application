@@ -20,6 +20,7 @@ public class UserData implements UserDetails {
     private UUID userId;
     private String username;
     private String password;
+    private String email;
     private UserRole role;
     //    private List<String> permissions;
     private boolean isAccountActive;

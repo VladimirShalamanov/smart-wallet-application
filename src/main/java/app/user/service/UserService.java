@@ -173,6 +173,6 @@ public class UserService implements UserDetailsService {
             currentSession.setAttribute("inactiveUserMessage", "This account is blocked!");
         }
 
-        return new UserData(user.getId(), username, user.getPassword(), user.getRole(), user.isActive());
+        return new UserData(user.getId(), username, user.getPassword(), user.getEmail(), user.getRole(), user.isActive());
     }
 }

@@ -1,5 +1,6 @@
 package app.web;
 
+import app.exception.NotificationRetryFailedException;
 import app.exception.UserNotFoundException;
 import app.exception.UsernameAlreadyExistException;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,14 @@ public class GlobalControllerAdvice {
         // "errorMessageUsernameAlreadyExist" for Thymeleaf custom message
         redirectAttributes.addFlashAttribute("errorMessageUsernameAlreadyExist", e.getMessage());
         return "redirect:/register";
+    }
+
+    @ExceptionHandler(NotificationRetryFailedException.class)
+    public String handleNotificationRetryFailedException(NotificationRetryFailedException e,
+                                                         RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("errorMessageNotificationRetry", e.getMessage());
+        return "redirect:/notifications";
     }
 
     @ExceptionHandler({
