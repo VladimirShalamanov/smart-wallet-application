@@ -18,9 +18,9 @@ public class EditProfileRequest {
     @Size(min = 2, max = 24)
     private String lastName;
 
-    @Email
+    @URL
     private String profilePicture;
 
-    @URL
+    @Email
     private String email;
 }

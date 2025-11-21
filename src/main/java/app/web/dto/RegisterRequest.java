@@ -16,12 +16,12 @@ public class RegisterRequest {
 
     @NotBlank
     @Size(min = 6, max = 26, message = "Username length must be between 6 and 24 symbols.")
-    String username;
+    private String username;
 
     @NotBlank
     @Size(min = 6, max = 6, message = "Password must be exactly 6 symbols.")
-    String password;
+    private String password;
 
     @NotNull
-    UserCountry country;
+    private UserCountry country;
 }
