@@ -16,6 +16,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "users") // for SubscribeITest, doesn't work without this
 public class User {
 
     @Id

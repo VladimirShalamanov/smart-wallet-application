@@ -12,7 +12,6 @@ import app.user.model.User;
 import app.wallet.service.WalletService;
 import app.web.dto.UpgradeRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +19,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class SubscriptionService {
@@ -123,5 +124,10 @@ public class SubscriptionService {
         }
 
         throw new RuntimeException("Price not found for type [%s] and period [%s]".formatted(type, period));
+    }
+
+    public List<Subscription> getAllByOwnerId(UUID userId) {
+
+        return subscriptionRepository.findAllByOwner_Id(userId);
     }
 }

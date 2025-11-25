@@ -76,14 +76,15 @@ public class UserController {
 
         userService.switchRole(userId);
 
-        return  "redirect:/users";
+        return "redirect:/users";
     }
 
     @PatchMapping("/{userId}/status")
-    public  String switchUserStatus(@PathVariable UUID userId){
+    @PreAuthorize("hasRole('ADMIN')")
+    public String switchUserStatus(@PathVariable UUID userId) {
 
         userService.switchStatus(userId);
 
-        return  "redirect:/users";
+        return "redirect:/users";
     }
 }
